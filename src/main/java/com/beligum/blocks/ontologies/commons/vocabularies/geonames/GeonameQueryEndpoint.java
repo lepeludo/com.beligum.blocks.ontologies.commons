@@ -190,7 +190,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
         return retVal;
     }
     @Override
-    public ResourceInfo getResource(RdfClass resourceType, URI resourceId, Locale language) throws IOException
+    public ResourceInfo getResource(RdfClass resourceType, URI resourceId, Locale language, SearchOption... options) throws IOException
     {
         GeonameResourceInfo retVal = null;
 

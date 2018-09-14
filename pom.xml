@@ -22,12 +22,12 @@
     <parent>
         <groupId>com.beligum</groupId>
         <artifactId>parent-web-open</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
     </parent>
 
     <groupId>com.beligum.blocks</groupId>
     <artifactId>blocks-ontologies-commons</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <url>http://www.beligum.com</url>
 
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.beligum.blocks</groupId>
             <artifactId>blocks-core</artifactId>
-            <version>0.4.5</version>
+            <version>0.5.0</version>
         </dependency>
 
     </dependencies>

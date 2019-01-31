@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.beligum.blocks</groupId>
             <artifactId>blocks-core</artifactId>
-            <version>0.7.0</version>
+            <version>0.7.3-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

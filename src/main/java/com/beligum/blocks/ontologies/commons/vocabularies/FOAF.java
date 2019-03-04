@@ -16,8 +16,8 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 
 import java.net.URI;
 
@@ -28,10 +28,10 @@ import java.net.URI;
  *
  * Created by bram on 2/28/16.
  */
-public final class FOAF extends AbstractRdfVocabulary
+public final class FOAF extends RdfOntologyImpl
 {
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new FOAF();
+    public static final RdfOntology INSTANCE = new FOAF();
     private FOAF()
     {
         super(URI.create("http://xmlns.com/foaf/0.1/"), "foaf");

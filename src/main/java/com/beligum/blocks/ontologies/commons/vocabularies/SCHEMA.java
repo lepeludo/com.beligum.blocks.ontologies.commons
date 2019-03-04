@@ -16,20 +16,20 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 
 import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class SCHEMA extends AbstractRdfVocabulary
+public final class SCHEMA extends RdfOntologyImpl
 {
     //-----VARIABLES-----
 
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new SCHEMA();
+    public static final RdfOntology INSTANCE = new SCHEMA();
     private SCHEMA()
     {
         super(URI.create("http://schema.org/"), "schema");

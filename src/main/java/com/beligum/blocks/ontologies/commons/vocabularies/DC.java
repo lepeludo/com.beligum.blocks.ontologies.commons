@@ -16,18 +16,18 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 
 import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class DC extends AbstractRdfVocabulary
+public final class DC extends RdfOntologyImpl
 {
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new DC();
+    public static final RdfOntology INSTANCE = new DC();
     private DC()
     {
         super(URI.create("http://purl.org/dc/terms/"), "dc");

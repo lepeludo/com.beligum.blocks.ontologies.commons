@@ -16,8 +16,8 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 
 import java.net.URI;
 
@@ -29,10 +29,10 @@ import java.net.URI;
  *
  * Created by bram on 2/28/16.
  */
-public final class XV extends AbstractRdfVocabulary
+public final class XV extends RdfOntologyImpl
 {
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new XV();
+    public static final RdfOntology INSTANCE = new XV();
     private XV()
     {
         //Note: don't know about the prefix; didn't find many public uses...

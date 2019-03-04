@@ -16,18 +16,18 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 
 import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class DBR extends AbstractRdfVocabulary
+public final class DBR extends RdfOntologyImpl
 {
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new DBR();
+    public static final RdfOntology INSTANCE = new DBR();
     private DBR()
     {
         super(URI.create("http://dbpedia.org/resource/"), "dbr");

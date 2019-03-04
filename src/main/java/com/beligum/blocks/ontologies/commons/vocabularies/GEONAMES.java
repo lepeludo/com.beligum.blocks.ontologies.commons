@@ -18,23 +18,23 @@ package com.beligum.blocks.ontologies.commons.vocabularies;
 
 import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfProperty;
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.RdfClassImpl;
-import com.beligum.blocks.rdf.ontology.RdfPropertyImpl;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.XSD;
+import com.beligum.blocks.rdf.ifaces.RdfOntology;
+import com.beligum.blocks.rdf.RdfClassImpl;
+import com.beligum.blocks.rdf.RdfPropertyImpl;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
+import com.beligum.blocks.rdf.ontologies.XSD;
 
 import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class GEONAMES extends AbstractRdfVocabulary
+public final class GEONAMES extends RdfOntologyImpl
 {
     //-----VARIABLES-----
 
     //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new GEONAMES();
+    public static final RdfOntology INSTANCE = new GEONAMES();
     private GEONAMES()
     {
         super(URI.create("http://www.geonames.org/ontology#"), "geonames");
@@ -43,10 +43,6 @@ public final class GEONAMES extends AbstractRdfVocabulary
     //-----PUBLIC FUNCTIONS-----
 
     //-----ENTRIES-----
-    /**
-     * The class of OWL individuals
-     * Note: this is actually an OwlClass (that subclasses rdfs:Class)
-     */
     public static final RdfClass Feature = new RdfClassImpl("Feature", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_Feature, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_Feature, null);
 
     public static final RdfProperty name = new RdfPropertyImpl("name", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_name, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_name, XSD.STRING);

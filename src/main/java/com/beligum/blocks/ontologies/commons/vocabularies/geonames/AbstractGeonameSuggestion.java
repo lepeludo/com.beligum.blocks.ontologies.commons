@@ -16,7 +16,7 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
 
-import com.beligum.blocks.config.RdfFactory;
+import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
 import com.beligum.blocks.utils.RdfTools;
 import com.fasterxml.jackson.annotation.JacksonInject;

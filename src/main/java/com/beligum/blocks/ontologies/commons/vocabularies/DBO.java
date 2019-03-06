@@ -16,8 +16,14 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
+import com.beligum.blocks.exceptions.RdfInitializationException;
+import com.beligum.blocks.rdf.RdfFactory;
+import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
+import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
+import com.beligum.blocks.rdf.ifaces.RdfProperty;
 
 import java.net.URI;
 
@@ -26,13 +32,22 @@ import java.net.URI;
  */
 public final class DBO extends RdfOntologyImpl
 {
-    //-----SINGLETON-----
-    public static final RdfOntology INSTANCE = new DBO();
-    private DBO()
+    //-----CONSTANTS-----
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/ontology/", "dbo");
+
+    //-----MEMBERS-----
+
+    //-----CONSTRUCTORS-----
+    @Override
+    protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
-        super(URI.create("http://dbpedia.org/ontology/"), "dbo");
     }
 
-    //-----ENTRIES-----
+    //-----PUBLIC METHODS-----
+    @Override
+    public RdfNamespace getNamespace()
+    {
+        return NAMESPACE;
+    }
 
 }

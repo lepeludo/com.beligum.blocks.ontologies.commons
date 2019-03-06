@@ -16,6 +16,10 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
+import com.beligum.blocks.exceptions.RdfInitializationException;
+import com.beligum.blocks.rdf.RdfFactory;
+import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
 
@@ -31,14 +35,22 @@ import java.net.URI;
  */
 public final class XV extends RdfOntologyImpl
 {
-    //-----SINGLETON-----
-    public static final RdfOntology INSTANCE = new XV();
-    private XV()
+    //-----CONSTANTS-----
+    //Note: don't know about the prefix; didn't find many public uses...
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://www.bcn.cat/data/v8y/xvcard/#", "xv");
+
+    //-----MEMBERS-----
+
+    //-----CONSTRUCTORS-----
+    @Override
+    protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
-        //Note: don't know about the prefix; didn't find many public uses...
-        super(URI.create("http://www.bcn.cat/data/v8y/xvcard/#"), "xv");
     }
 
-    //-----ENTRIES-----
-
+    //-----PUBLIC METHODS-----
+    @Override
+    public RdfNamespace getNamespace()
+    {
+        return NAMESPACE;
+    }
 }

@@ -16,39 +16,56 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
+import com.beligum.blocks.exceptions.RdfInitializationException;
+import com.beligum.blocks.rdf.*;
 import com.beligum.blocks.rdf.ifaces.RdfClass;
+import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfProperty;
-import com.beligum.blocks.rdf.ifaces.RdfOntology;
-import com.beligum.blocks.rdf.RdfClassImpl;
-import com.beligum.blocks.rdf.RdfPropertyImpl;
-import com.beligum.blocks.rdf.RdfOntologyImpl;
 import com.beligum.blocks.rdf.ontologies.XSD;
-
-import java.net.URI;
+import gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons;
 
 /**
  * Created by bram on 2/28/16.
  */
 public final class GEONAMES extends RdfOntologyImpl
 {
-    //-----VARIABLES-----
+    //-----CONSTANTS-----
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://www.geonames.org/ontology#", "geonames");
 
-    //-----SINGLETON-----
-    public static final RdfOntology INSTANCE = new GEONAMES();
-    private GEONAMES()
+    //-----MEMBERS-----
+    public static final RdfClass Feature = RdfFactory.newProxyClass("Feature");
+    public static final RdfProperty name = RdfFactory.newProxyProperty("name");
+    public static final RdfProperty officialName = RdfFactory.newProxyProperty("officialName");
+    public static final RdfProperty alternateName = RdfFactory.newProxyProperty("alternateName");
+
+    //-----CONSTRUCTORS-----
+    @Override
+    protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
-        super(URI.create("http://www.geonames.org/ontology#"), "geonames");
+        rdfFactory.register(Feature)
+                  .title(commons.Entries.GEONAMES_title_Feature)
+                  .label(commons.Entries.GEONAMES_label_Feature);
+
+        rdfFactory.register(name)
+                  .title(commons.Entries.GEONAMES_title_name)
+                  .label(commons.Entries.GEONAMES_label_name)
+                  .dataType(XSD.string);
+
+        rdfFactory.register(officialName)
+                  .title(commons.Entries.GEONAMES_title_officialName)
+                  .label(commons.Entries.GEONAMES_label_officialName)
+                  .dataType(XSD.string);
+
+        rdfFactory.register(alternateName)
+                  .title(commons.Entries.GEONAMES_title_alternateName)
+                  .label(commons.Entries.GEONAMES_label_alternateName)
+                  .dataType(XSD.string);
     }
 
-    //-----PUBLIC FUNCTIONS-----
-
-    //-----ENTRIES-----
-    public static final RdfClass Feature = new RdfClassImpl("Feature", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_Feature, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_Feature, null);
-
-    public static final RdfProperty name = new RdfPropertyImpl("name", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_name, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_name, XSD.STRING);
-
-    public static final RdfProperty officialName = new RdfPropertyImpl("officialName", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_officialName, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_officialName, XSD.STRING);
-
-    public static final RdfProperty alternateName = new RdfPropertyImpl("alternateName", INSTANCE, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_title_alternateName, gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons.Entries.GEONAMES_label_alternateName, XSD.STRING);
-
+    //-----PUBLIC METHODS-----
+    @Override
+    public RdfNamespace getNamespace()
+    {
+        return NAMESPACE;
+    }
 }

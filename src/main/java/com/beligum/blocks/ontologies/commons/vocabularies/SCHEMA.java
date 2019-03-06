@@ -16,6 +16,10 @@
 
 package com.beligum.blocks.ontologies.commons.vocabularies;
 
+import com.beligum.blocks.exceptions.RdfInitializationException;
+import com.beligum.blocks.rdf.RdfFactory;
+import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
 
@@ -26,16 +30,21 @@ import java.net.URI;
  */
 public final class SCHEMA extends RdfOntologyImpl
 {
-    //-----VARIABLES-----
+    //-----CONSTANTS-----
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://schema.org/", "schema");
 
-    //-----SINGLETON-----
-    public static final RdfOntology INSTANCE = new SCHEMA();
-    private SCHEMA()
+    //-----MEMBERS-----
+
+    //-----CONSTRUCTORS-----
+    @Override
+    protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
-        super(URI.create("http://schema.org/"), "schema");
     }
 
-    //-----PUBLIC FUNCTIONS-----
-
-    //-----ENTRIES-----
+    //-----PUBLIC METHODS-----
+    @Override
+    public RdfNamespace getNamespace()
+    {
+        return NAMESPACE;
+    }
 }

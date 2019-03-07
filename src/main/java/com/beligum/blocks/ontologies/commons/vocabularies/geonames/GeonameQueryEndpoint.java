@@ -27,9 +27,7 @@ import com.beligum.blocks.endpoints.ifaces.RdfQueryEndpoint;
 import com.beligum.blocks.endpoints.ifaces.ResourceInfo;
 import com.beligum.blocks.ontologies.commons.config.Settings;
 import com.beligum.blocks.ontologies.commons.vocabularies.GEONAMES;
-import com.beligum.blocks.rdf.ifaces.Format;
-import com.beligum.blocks.rdf.ifaces.RdfClass;
-import com.beligum.blocks.rdf.ifaces.RdfProperty;
+import com.beligum.blocks.rdf.ifaces.*;
 import com.beligum.blocks.rdf.importers.SesameImporter;
 import com.beligum.blocks.utils.RdfTools;
 import com.fasterxml.jackson.databind.InjectableValues;
@@ -85,7 +83,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
     //-----PUBLIC METHODS-----
     @Override
     //Note: check the inner cache class if you add variables
-    public Collection<AutocompleteSuggestion> search(RdfClass resourceType, final String query, QueryType queryType, Locale language, int maxResults, SearchOption... options) throws IOException
+    public Collection<AutocompleteSuggestion> search(RdfOntologyMember resourceType, final String query, QueryType queryType, Locale language, int maxResults, SearchOption... options) throws IOException
     {
         Collection<AutocompleteSuggestion> retVal = new ArrayList<>();
 
@@ -190,7 +188,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
         return retVal;
     }
     @Override
-    public ResourceInfo getResource(RdfClass resourceType, URI resourceId, Locale language, SearchOption... options) throws IOException
+    public ResourceInfo getResource(RdfOntologyMember resourceType, URI resourceId, Locale language, SearchOption... options) throws IOException
     {
         GeonameResourceInfo retVal = null;
 
@@ -382,7 +380,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
      * This method allows us to use queries like the one above, and use the Geonames postalCodeSearch endpoint to query the official name of that city.
      * Note that we have to do a two-step search because the postalCodeSearch doesn't seem to return the geoname ID...
      */
-    private Collection<AutocompleteSuggestion> deeperCitySearch(Client httpClient, RdfClass resourceType, final String query, QueryType queryType, Locale language, int maxResults,
+    private Collection<AutocompleteSuggestion> deeperCitySearch(Client httpClient, RdfOntologyMember resourceType, final String query, QueryType queryType, Locale language, int maxResults,
                                                                 SearchOption... options)
     {
         Collection<AutocompleteSuggestion> retVal = new ArrayList<>();
@@ -483,13 +481,13 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
     private static class CachedSearch
     {
         private AbstractGeoname.Type geonameType;
-        private RdfClass resourceType;
+        private RdfOntologyMember resourceType;
         private String query;
         private QueryType queryType;
         private Locale language;
         private SearchOption[] options;
 
-        public CachedSearch(AbstractGeoname.Type geonameType, RdfClass resourceType, String query, QueryType queryType, Locale language, SearchOption[] options)
+        public CachedSearch(AbstractGeoname.Type geonameType, RdfOntologyMember resourceType, String query, QueryType queryType, Locale language, SearchOption[] options)
         {
             this.geonameType = geonameType;
             this.resourceType = resourceType;
@@ -545,11 +543,11 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
 
     private static class CachedResource
     {
-        private RdfClass resourceType;
+        private RdfOntologyMember resourceType;
         private URI resourceId;
         private Locale language;
 
-        public CachedResource(RdfClass resourceType, URI resourceId, Locale language)
+        public CachedResource(RdfOntologyMember resourceType, URI resourceId, Locale language)
         {
             this.resourceType = resourceType;
             this.resourceId = resourceId;

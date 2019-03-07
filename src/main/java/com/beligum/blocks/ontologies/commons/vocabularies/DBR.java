@@ -34,6 +34,7 @@ public final class DBR extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/resource/", "dbr");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -47,5 +48,9 @@ public final class DBR extends RdfOntologyImpl
     {
         return NAMESPACE;
     }
-
+    @Override
+    public boolean isPublic()
+    {
+        return false;
+    }
 }

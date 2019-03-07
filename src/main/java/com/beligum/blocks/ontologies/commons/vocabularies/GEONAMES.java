@@ -37,6 +37,7 @@ public final class GEONAMES extends RdfOntologyImpl
     public static final RdfProperty name = RdfFactory.newProxyProperty("name");
     public static final RdfProperty officialName = RdfFactory.newProxyProperty("officialName");
     public static final RdfProperty alternateName = RdfFactory.newProxyProperty("alternateName");
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -67,5 +68,10 @@ public final class GEONAMES extends RdfOntologyImpl
     public RdfNamespace getNamespace()
     {
         return NAMESPACE;
+    }
+    @Override
+    public boolean isPublic()
+    {
+        return false;
     }
 }

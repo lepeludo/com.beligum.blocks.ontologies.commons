@@ -28,12 +28,13 @@ import java.net.URI;
 /**
  * Created by bram on 2/28/16.
  */
-public final class DC extends RdfOntologyImpl
+public final class DCTERMS extends RdfOntologyImpl
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://purl.org/dc/terms/", "dc");
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://purl.org/dc/terms/", "dcterms");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -46,5 +47,10 @@ public final class DC extends RdfOntologyImpl
     public RdfNamespace getNamespace()
     {
         return NAMESPACE;
+    }
+    @Override
+    public boolean isPublic()
+    {
+        return false;
     }
 }

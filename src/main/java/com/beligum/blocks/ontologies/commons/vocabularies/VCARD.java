@@ -34,6 +34,7 @@ public final class VCARD extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://www.w3.org/2006/vcard/ns#", "vcard");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -46,5 +47,10 @@ public final class VCARD extends RdfOntologyImpl
     public RdfNamespace getNamespace()
     {
         return NAMESPACE;
+    }
+    @Override
+    public boolean isPublic()
+    {
+        return false;
     }
 }

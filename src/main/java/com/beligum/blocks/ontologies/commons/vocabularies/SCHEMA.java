@@ -34,6 +34,7 @@ public final class SCHEMA extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://schema.org/", "schema");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -46,5 +47,10 @@ public final class SCHEMA extends RdfOntologyImpl
     public RdfNamespace getNamespace()
     {
         return NAMESPACE;
+    }
+    @Override
+    public boolean isPublic()
+    {
+        return false;
     }
 }

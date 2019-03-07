@@ -38,6 +38,7 @@ public final class FOAF extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://xmlns.com/foaf/0.1/", "foaf");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -51,5 +52,9 @@ public final class FOAF extends RdfOntologyImpl
     {
         return NAMESPACE;
     }
-
+    @Override
+    public boolean isPublic()
+    {
+        return false;
+    }
 }

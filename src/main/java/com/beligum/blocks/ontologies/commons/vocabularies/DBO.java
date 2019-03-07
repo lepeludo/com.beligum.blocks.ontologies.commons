@@ -36,6 +36,7 @@ public final class DBO extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/ontology/", "dbo");
 
     //-----MEMBERS-----
+    // TODO
 
     //-----CONSTRUCTORS-----
     @Override
@@ -49,5 +50,9 @@ public final class DBO extends RdfOntologyImpl
     {
         return NAMESPACE;
     }
-
+    @Override
+    public boolean isPublic()
+    {
+        return false;
+    }
 }

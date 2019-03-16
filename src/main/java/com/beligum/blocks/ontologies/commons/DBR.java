@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfNamespace;
-import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
-
-import java.net.URI;
+import gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class DCTERMS extends RdfOntologyImpl
+public final class DBR extends RdfOntologyImpl
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://purl.org/dc/terms/", "dcterms");
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/resource/", "dbr");
 
     //-----MEMBERS-----
+    public static final RdfClass Web_page = RdfFactory.newProxyClass("Web_page");
+
     // TODO
 
     //-----CONSTRUCTORS-----
     @Override
     protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
+        rdfFactory.register(Web_page);
     }
 
     //-----PUBLIC METHODS-----
@@ -49,7 +51,7 @@ public final class DCTERMS extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

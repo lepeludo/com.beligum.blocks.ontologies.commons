@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
+import com.beligum.blocks.rdf.ifaces.RdfProperty;
 
 import java.net.URI;
 
 /**
- * Friend of a Friend (FOAF) vocabulary
- *
- * The Friend of a Friend (FOAF) RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language.
- *
  * Created by bram on 2/28/16.
  */
-public final class FOAF extends RdfOntologyImpl
+public final class DBO extends RdfOntologyImpl
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://xmlns.com/foaf/0.1/", "foaf");
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/ontology/", "dbo");
 
     //-----MEMBERS-----
     // TODO
@@ -53,7 +51,7 @@ public final class FOAF extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

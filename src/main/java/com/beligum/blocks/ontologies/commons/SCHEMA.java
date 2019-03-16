@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
+import gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons;
 
 import java.net.URI;
 
@@ -34,12 +36,14 @@ public final class SCHEMA extends RdfOntologyImpl
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://schema.org/", "schema");
 
     //-----MEMBERS-----
+    public static final RdfClass WebPage = RdfFactory.newProxyClass("WebPage");
     // TODO
 
     //-----CONSTRUCTORS-----
     @Override
     protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
+        rdfFactory.register(WebPage);
     }
 
     //-----PUBLIC METHODS-----
@@ -49,7 +53,7 @@ public final class SCHEMA extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

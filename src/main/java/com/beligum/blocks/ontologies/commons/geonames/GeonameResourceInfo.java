@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
+package com.beligum.blocks.ontologies.commons.geonames;
 
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.endpoints.ifaces.ResourceInfo;
@@ -57,7 +57,7 @@ public class GeonameResourceInfo extends AbstractGeoname implements ResourceInfo
     @Override
     public URI getResourceUri()
     {
-        return RdfTools.createRelativeResourceId(RdfFactory.getClassForResourceType(this.getResourceType()), this.geonameId);
+        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), this.geonameId);
     }
     @Override
     public URI getResourceType()

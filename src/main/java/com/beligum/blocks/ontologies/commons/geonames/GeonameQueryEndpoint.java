@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
+package com.beligum.blocks.ontologies.commons.geonames;
 
 import com.beligum.base.cache.Cache;
 import com.beligum.base.cache.EhCacheAdaptor;
@@ -26,7 +26,7 @@ import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
 import com.beligum.blocks.endpoints.ifaces.RdfQueryEndpoint;
 import com.beligum.blocks.endpoints.ifaces.ResourceInfo;
 import com.beligum.blocks.ontologies.commons.config.Settings;
-import com.beligum.blocks.ontologies.commons.vocabularies.GEONAMES;
+import com.beligum.blocks.ontologies.commons.GEONAMES;
 import com.beligum.blocks.rdf.ifaces.*;
 import com.beligum.blocks.rdf.importers.SesameImporter;
 import com.beligum.blocks.utils.RdfTools;

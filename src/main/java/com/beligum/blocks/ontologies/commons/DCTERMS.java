@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
@@ -28,10 +28,10 @@ import java.net.URI;
 /**
  * Created by bram on 2/28/16.
  */
-public final class VCARD extends RdfOntologyImpl
+public final class DCTERMS extends RdfOntologyImpl
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://www.w3.org/2006/vcard/ns#", "vcard");
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://purl.org/dc/terms/", "dcterms");
 
     //-----MEMBERS-----
     // TODO
@@ -49,7 +49,7 @@ public final class VCARD extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

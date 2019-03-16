@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.*;
@@ -44,21 +44,17 @@ public final class GEONAMES extends RdfOntologyImpl
     protected void create(RdfFactory rdfFactory) throws RdfInitializationException
     {
         rdfFactory.register(Feature)
-                  .title(commons.Entries.GEONAMES_title_Feature)
                   .label(commons.Entries.GEONAMES_label_Feature);
 
         rdfFactory.register(name)
-                  .title(commons.Entries.GEONAMES_title_name)
                   .label(commons.Entries.GEONAMES_label_name)
                   .dataType(XSD.string);
 
         rdfFactory.register(officialName)
-                  .title(commons.Entries.GEONAMES_title_officialName)
                   .label(commons.Entries.GEONAMES_label_officialName)
                   .dataType(XSD.string);
 
         rdfFactory.register(alternateName)
-                  .title(commons.Entries.GEONAMES_title_alternateName)
                   .label(commons.Entries.GEONAMES_label_alternateName)
                   .dataType(XSD.string);
     }
@@ -70,7 +66,7 @@ public final class GEONAMES extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

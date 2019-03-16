@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies;
+package com.beligum.blocks.ontologies.commons;
 
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.rdf.RdfNamespaceImpl;
-import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 import com.beligum.blocks.rdf.ifaces.RdfOntology;
 import com.beligum.blocks.rdf.RdfOntologyImpl;
-import com.beligum.blocks.rdf.ifaces.RdfProperty;
 
 import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.
  */
-public final class DBO extends RdfOntologyImpl
+public final class VCARD extends RdfOntologyImpl
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://dbpedia.org/ontology/", "dbo");
+    public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://www.w3.org/2006/vcard/ns#", "vcard");
 
     //-----MEMBERS-----
     // TODO
@@ -51,7 +49,7 @@ public final class DBO extends RdfOntologyImpl
         return NAMESPACE;
     }
     @Override
-    public boolean isPublic()
+    protected boolean isPublicOntology()
     {
         return false;
     }

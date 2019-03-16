@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
+package com.beligum.blocks.ontologies.commons.geonames;
 
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
@@ -44,7 +44,7 @@ public abstract class AbstractGeonameSuggestion extends AbstractGeoname implemen
     @Override
     public String getValue()
     {
-        return RdfTools.createRelativeResourceId(RdfFactory.getClassForResourceType(this.getResourceType()), geonameId).toString();
+        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), geonameId).toString();
     }
     @Override
     public URI getResourceType()
@@ -55,7 +55,7 @@ public abstract class AbstractGeonameSuggestion extends AbstractGeoname implemen
     public URI getPublicPage()
     {
         //Note: it makes sense to return the resource address as the public page; the application endpoint will decide what to do with it
-        return RdfTools.createRelativeResourceId(RdfFactory.getClassForResourceType(this.getResourceType()), geonameId);
+        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), geonameId);
     }
     @Override
     public String getTitle()

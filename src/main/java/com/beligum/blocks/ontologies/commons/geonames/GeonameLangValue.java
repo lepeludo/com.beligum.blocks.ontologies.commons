@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
+package com.beligum.blocks.ontologies.commons.geonames;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 

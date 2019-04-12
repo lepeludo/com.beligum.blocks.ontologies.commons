@@ -16,8 +16,8 @@
 
 package com.beligum.blocks.ontologies.commons.geonames;
 
+import com.beligum.blocks.index.ifaces.ResourceProxy;
 import com.beligum.blocks.rdf.RdfFactory;
-import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
 import com.beligum.blocks.utils.RdfTools;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,42 +28,18 @@ import java.net.URI;
 /**
  * Created by bram on 3/12/16.
  */
-public abstract class AbstractGeonameSuggestion extends AbstractGeoname implements AutocompleteSuggestion
+public abstract class AbstractGeonameSuggestion extends AbstractGeoname
 {
     //-----CONSTANTS-----
 
     //-----VARIABLES-----
-    protected URI resourceType;
-    protected String geonameId;
-    protected String name;
     protected String toponymName;
 
     //-----CONSTRUCTORS-----
 
     //-----PUBLIC METHODS-----
     @Override
-    public String getValue()
-    {
-        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), geonameId).toString();
-    }
-    @Override
-    public URI getResourceType()
-    {
-        return resourceType;
-    }
-    @Override
-    public URI getPublicPage()
-    {
-        //Note: it makes sense to return the resource address as the public page; the application endpoint will decide what to do with it
-        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), geonameId);
-    }
-    @Override
-    public String getTitle()
-    {
-        return name;
-    }
-    @Override
-    public String getSubTitle()
+    public String getDescription()
     {
         return toponymName;
     }

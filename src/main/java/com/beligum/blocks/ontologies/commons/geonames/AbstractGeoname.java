@@ -16,14 +16,19 @@
 
 package com.beligum.blocks.ontologies.commons.geonames;
 
-import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
+import com.beligum.blocks.index.ifaces.ResourceProxy;
+import com.beligum.blocks.rdf.RdfFactory;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
+import com.beligum.blocks.utils.RdfTools;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.net.URI;
+import java.util.Locale;
 
 /**
  * Created by bram on 3/12/16.
  */
-public abstract class AbstractGeoname
+public abstract class AbstractGeoname implements ResourceProxy
 {
     //-----CONSTANTS-----
     public static final String RESOURCE_TYPE_INJECTABLE = "resourceType";
@@ -74,8 +79,8 @@ public abstract class AbstractGeoname
 
         public String[] featureClasses;
         public String[] featureCodes;
-        public Class<? extends AutocompleteSuggestion> suggestionClass;
-        Type(String[] featureClasses, String[] featureCodes, Class<? extends AutocompleteSuggestion> suggestionClass)
+        public Class<? extends ResourceProxy> suggestionClass;
+        Type(String[] featureClasses, String[] featureCodes, Class<? extends ResourceProxy> suggestionClass)
         {
             this.featureClasses = featureClasses;
             this.featureCodes = featureCodes;
@@ -84,6 +89,12 @@ public abstract class AbstractGeoname
     }
 
     //-----VARIABLES-----
+    protected URI resourceType;
+    protected String geonameId;
+    protected String name;
+    protected Locale language;
+
+    private transient RdfClass cachedRdfClass;
 
     //-----CONSTRUCTORS-----
 
@@ -99,8 +110,65 @@ public abstract class AbstractGeoname
     }
 
     //-----PUBLIC METHODS-----
+    @Override
+    public URI getUri()
+    {
+        //note that the endpoint behind this will take care of the redirection to a good external landing page
+        return RdfTools.createRelativeResourceId(this.getTypeOf(), this.geonameId);
+    }
+    @Override
+    public String getResource()
+    {
+        return this.getUri().toString();
+    }
+    @Override
+    public RdfClass getTypeOf()
+    {
+        return this.getCachedRdfClass();
+    }
+    @Override
+    public String getLabel()
+    {
+        return name;
+    }
+    @Override
+    public boolean isExternal()
+    {
+        return true;
+    }
+    @Override
+    public URI getParentUri()
+    {
+        return null;
+    }
+    @Override
+    public URI getImage()
+    {
+        return null;
+    }
+    @Override
+    public Locale getLanguage()
+    {
+        return language;
+    }
+    /**
+     * We need to make this one public because the geonames webservice doesn't return the value; it's set manually after fetching it from the service
+     */
+    public void setLanguage(Locale language)
+    {
+        this.language = language;
+    }
 
     //-----PROTECTED METHODS-----
 
     //-----PRIVATE METHODS-----
+    @JsonIgnore
+    private RdfClass getCachedRdfClass()
+    {
+        if (this.cachedRdfClass == null && this.resourceType != null) {
+            this.cachedRdfClass = RdfFactory.getClass(this.resourceType);
+        }
+
+        return this.cachedRdfClass;
+    }
 }

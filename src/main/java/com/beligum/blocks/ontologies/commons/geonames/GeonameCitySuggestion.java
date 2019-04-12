@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
 
+import java.net.URI;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -48,7 +50,7 @@ public class GeonameCitySuggestion extends AbstractGeonameSuggestion
 
     //-----PUBLIC METHODS-----
     @Override
-    public String getSubTitle()
+    public String getDescription()
     {
         final int MAX_SPECIFIC_LEVEL = 2;
         int specificationLevel = 0;
@@ -72,8 +74,8 @@ public class GeonameCitySuggestion extends AbstractGeonameSuggestion
     private int specify(StringBuilder descriptiveName, Set<String> specifications, final int MAX_SPECIFIC_LEVEL, int specificationLevel, String value)
     {
         //Note: don't add empty values and don't add doubles
-        if (specificationLevel<MAX_SPECIFIC_LEVEL && !StringUtils.isEmpty(value) && !specifications.contains(value)) {
-            if (descriptiveName.length()!=0) {
+        if (specificationLevel < MAX_SPECIFIC_LEVEL && !StringUtils.isEmpty(value) && !specifications.contains(value)) {
+            if (descriptiveName.length() != 0) {
                 descriptiveName.append(", ");
             }
             descriptiveName.append(value);

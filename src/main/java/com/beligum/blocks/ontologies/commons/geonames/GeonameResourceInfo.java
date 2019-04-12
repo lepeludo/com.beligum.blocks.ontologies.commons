@@ -16,8 +16,9 @@
 
 package com.beligum.blocks.ontologies.commons.geonames;
 
+import com.beligum.blocks.index.ifaces.ResourceProxy;
 import com.beligum.blocks.rdf.RdfFactory;
-import com.beligum.blocks.endpoints.ifaces.ResourceInfo;
+import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.utils.RdfTools;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,19 +31,15 @@ import java.util.Locale;
 /**
  * Created by bram on 3/12/16.
  */
-public class GeonameResourceInfo extends AbstractGeoname implements ResourceInfo
+public class GeonameResourceInfo extends AbstractGeoname
 {
     //-----CONSTANTS-----
     //special value for 'lang' that maps to external documentation
     private static final String LINK_LANGUAGE = "link";
 
     //-----VARIABLES-----
-    private URI resourceType;
-    private String name;
     private String toponymName;
-    private String geonameId;
     private List<GeonameLangValue> alternateName;
-    private Locale language;
 
     //temp values...
     private transient boolean triedLink;
@@ -55,55 +52,24 @@ public class GeonameResourceInfo extends AbstractGeoname implements ResourceInfo
 
     //-----PUBLIC METHODS-----
     @Override
-    public URI getResourceUri()
+    public String getDescription()
     {
-        return RdfTools.createRelativeResourceId(RdfFactory.getClass(this.getResourceType()), this.geonameId);
+        return null;
     }
     @Override
-    public URI getResourceType()
-    {
-        return resourceType;
-    }
-    @Override
-    public String getLabel()
-    {
-        return name;
-    }
-    @Override
-    public URI getLink()
-    {
-        //note that the endpoint behind this will take care of the redirection to a good external landing page
-        return getResourceUri();
-    }
-    @Override
-    public boolean isExternalLink()
+    public boolean isExternal()
     {
         return true;
+    }
+    @Override
+    public URI getParentUri()
+    {
+        return null;
     }
     @Override
     public URI getImage()
     {
         return null;
-    }
-    //this getter is a little bit of a mindfuck because it has the same name as it's setter but is used differently;
-    // the setter is used to set the name property, coming in (deserialized) from geonames,
-    // this getter is called when the same object is serialized to our own JS client code, but we can return a different property if we want to
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-    @Override
-    public Locale getLanguage()
-    {
-        return language;
-    }
-    /**
-     * We need to make this one public because the geonames webservice doesn't return the value; it's set manually after fetching it from the service
-     */
-    public void setLanguage(Locale language)
-    {
-        this.language = language;
     }
 
     //-----PROTECTED METHODS-----

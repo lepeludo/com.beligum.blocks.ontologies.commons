@@ -1,17 +1,11 @@
 package com.beligum.blocks.ontologies.commons;
 
-import com.beligum.blocks.config.Settings;
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
-import com.beligum.blocks.rdf.RdfOntologyImpl;
-import com.beligum.blocks.rdf.ifaces.RdfNamespace;
 
-import static com.beligum.blocks.rdf.ontologies.Local.Page;
-
-public class Local extends RdfOntologyImpl
+public class Main extends com.beligum.blocks.rdf.ontologies.Main
 {
     //-----CONSTANTS-----
-    public static final RdfNamespace NAMESPACE = Settings.instance().getRdfMainOntologyNamespace();
 
     //-----MEMBERS-----
 
@@ -27,14 +21,4 @@ public class Local extends RdfOntologyImpl
 
 
     //-----PUBLIC METHODS-----
-    @Override
-    public RdfNamespace getNamespace()
-    {
-        return NAMESPACE;
-    }
-    @Override
-    protected boolean isPublicOntology()
-    {
-        return true;
-    }
 }

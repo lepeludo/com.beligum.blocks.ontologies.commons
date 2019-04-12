@@ -37,7 +37,7 @@ public class GeonameCountrySuggestion extends AbstractGeonameSuggestion
 
     //-----PUBLIC METHODS-----
     @Override
-    public String getTitle()
+    public String getLabel()
     {
         String retVal = name;
 
@@ -45,7 +45,7 @@ public class GeonameCountrySuggestion extends AbstractGeonameSuggestion
         //so we add clarification here. Also in subtitle, but that's always the full form (eg. "Republic of ...")
         if (!StringUtils.isEmpty(this.countryName) && !this.countryName.equals(this.name)) {
             //makes sense to use the official country name as the primary return value and add the searched-for value between brackets
-            retVal = this.countryName+" ("+this.name+")";
+            retVal = this.countryName + " (" + this.name + ")";
         }
 
         return retVal;

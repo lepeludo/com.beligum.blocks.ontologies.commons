@@ -158,7 +158,7 @@ public class GeonameQueryEndpoint implements RdfEndpoint
                     JsonNode jsonNode = Json.getObjectMapper().readTree(response.readEntity(String.class));
                     Iterator<JsonNode> geonames = jsonNode.path("geonames").elements();
 
-                    InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurieName());
+                    InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurie());
                     ObjectReader reader = Json.getObjectMapper().readerFor(geonameType.suggestionClass).with(inject);
 
                     while (geonames.hasNext()) {
@@ -228,7 +228,7 @@ public class GeonameQueryEndpoint implements RdfEndpoint
                     Response response = httpClient.target(builder.build()).request(MediaType.APPLICATION_JSON).get();
                     if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 
-                        InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurieName());
+                        InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurie());
                         ObjectReader reader = XML.getObjectMapper().readerFor(GeonameResourceInfo.class).with(inject);
 
                         //note: the Geonames '/get' endpoint is XML only!

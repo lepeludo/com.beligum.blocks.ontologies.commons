@@ -102,7 +102,7 @@ public class GeonameQueryEndpoint implements RdfEndpoint
                 ClientConfig config = new ClientConfig();
                 Client httpClient = ClientBuilder.newClient(config);
                 //for details, see http://www.geonames.org/export/geonames-search.html
-                UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/search")
+                UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/searchJSON")
                                                .queryParam("username", this.username)
                                                //no need to fetch the entire node; we'll do that during selection
                                                //note: we select MEDIUM instead of SHORT to get the full country name (for cities)
@@ -217,21 +217,21 @@ public class GeonameQueryEndpoint implements RdfEndpoint
                                                    //we pass only the id, not the entire URI
                                                    .queryParam("geonameId", rdfResourceUri.getResourceId())
                                                    //when we query, we query for a lot
-                                                   .queryParam("style", "FULL")
-                                                   .queryParam("type", "json");
+                                                   .queryParam("style", "FULL");
 
                     if (language != null) {
                         builder.queryParam("lang", language.getLanguage());
                     }
 
                     //Logger.info("Requesting "+builder.build());
-                    Response response = httpClient.target(builder.build()).request(MediaType.APPLICATION_JSON).get();
+
+                    //note: the Geonames '/get' endpoint is XML only!
+                    Response response = httpClient.target(builder.build()).request(MediaType.APPLICATION_XML).get();
                     if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 
                         InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurie());
                         ObjectReader reader = XML.getObjectMapper().readerFor(GeonameResourceInfo.class).with(inject);
 
-                        //note: the Geonames '/get' endpoint is XML only!
                         retVal = reader.readValue(response.readEntity(String.class));
 
                         //API doesn't seem to return this -> set it manually
@@ -423,7 +423,7 @@ public class GeonameQueryEndpoint implements RdfEndpoint
                 if (countryCode != null) {
                     Logger.info("Didn't find any Geonames city result for '" + query + "', searching a bit deeper because we have a postal code.");
 
-                    UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/postalCodeSearch")
+                    UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/postalCodeSearchJSON")
                                                    .queryParam("username", this.username)
                                                    //.queryParam("postalcode", zipCode)
                                                    .queryParam("placename", city)

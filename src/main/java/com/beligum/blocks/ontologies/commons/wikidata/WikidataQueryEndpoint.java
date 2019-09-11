@@ -271,7 +271,8 @@ public class WikidataQueryEndpoint implements RdfEndpoint
 
     }
     /**
-     * Always have an english result!
+     * Please note that the entire model is not fetched from wikidata in this implementation. Models can get quite large (in the order of multiple MB's).
+     * Instead we build a tiny model with a construct statement.
      *
      * @param rdfClass
      * @param resourceId the id of the resource
@@ -292,8 +293,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
             URI rdfUri = this.getExternalResourceId(resourceId, language);
             String[] segments = rdfUri.getPath().split("/");
             String idStr = segments[segments.length - 1];
-            //the wikidata endpoint is actually https.
-//            Model cachedResult = this.getCachedEntry(cacheKey);
             Model cachedResult = null;
 
             if (cachedResult != null) {
@@ -360,9 +359,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                             "wd:" + idStr + " schema:description ?x .\n" +
                                    " FILTER(LANG(?l) = \""+R.i18n().getOptimalLocale().toLanguageTag()+"\") .\n " +
                                    " FILTER(LANG(?x) = \""+R.i18n().getOptimalLocale().toLanguageTag()+"\" ) .\n " +
-//                            " FILTER(LANG(?l) = \"nl\" || LANG(?l) = \"en\" || LANG(?l) = \"fr\") .\n " +
-//                            " FILTER(LANG(?x) = \"nl\" || LANG(?x) = \"en\" || LANG(?x) = \"fr\") .\n " +
-
                             "}";
                     RepositoryConnection sparqlConnection = null;
                     try {

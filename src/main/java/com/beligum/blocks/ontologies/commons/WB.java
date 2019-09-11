@@ -30,7 +30,7 @@ import static gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologi
  */
 public final class WB extends RdfOntologyImpl
 {
-    //the wikibase namespace
+    //the wikibase namespace, used by wikidata.
     public static final RdfNamespace NAMESPACE = new RdfNamespaceImpl("http://wikiba.se/ontology#", "WB");
     //the wikibase main class http://wikiba.se/ontology#Item
     public static final RdfClass Item = RdfFactory.newProxyClass("Item");

@@ -24,7 +24,7 @@ public class SQLiteJDBCDriverConnection {
             config.setSynchronous(SQLiteConfig.SynchronousMode.OFF);
             config.setJournalMode(SQLiteConfig.JournalMode.OFF);
             SQLiteDataSource unpooled = new SQLiteDataSource(config);
-            String dbPath = UriBuilder.fromPath(R.configuration().getString("wikidata-database-path")).path("wikidata.db").build().toString();
+            String dbPath = UriBuilder.fromPath(R.configuration().getString("wikidata.database-path")).path("wikidata.db").build().toString();
             unpooled.setUrl("jdbc:sqlite://"+dbPath);
             pooled = DataSources.pooledDataSource(unpooled);
             createResourceinfoTable();

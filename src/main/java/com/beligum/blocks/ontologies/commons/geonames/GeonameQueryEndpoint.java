@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.beligum.blocks.ontologies.commons.vocabularies.geonames;
+package com.beligum.blocks.ontologies.commons.geonames;
 
 import com.beligum.base.cache.Cache;
 import com.beligum.base.cache.EhCacheAdaptor;
@@ -22,14 +22,10 @@ import com.beligum.base.server.R;
 import com.beligum.base.utils.Logger;
 import com.beligum.base.utils.json.Json;
 import com.beligum.base.utils.xml.XML;
-import com.beligum.blocks.endpoints.ifaces.AutocompleteSuggestion;
-import com.beligum.blocks.endpoints.ifaces.RdfQueryEndpoint;
-import com.beligum.blocks.endpoints.ifaces.ResourceInfo;
+import com.beligum.blocks.index.ifaces.ResourceProxy;
+import com.beligum.blocks.ontologies.commons.GEONAMES;
 import com.beligum.blocks.ontologies.commons.config.Settings;
-import com.beligum.blocks.ontologies.commons.vocabularies.GEONAMES;
-import com.beligum.blocks.rdf.ifaces.Format;
-import com.beligum.blocks.rdf.ifaces.RdfClass;
-import com.beligum.blocks.rdf.ifaces.RdfProperty;
+import com.beligum.blocks.rdf.ifaces.*;
 import com.beligum.blocks.rdf.importers.SesameImporter;
 import com.beligum.blocks.utils.RdfTools;
 import com.fasterxml.jackson.databind.InjectableValues;
@@ -49,14 +45,17 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by bram on 3/14/16.
  */
-public class GeonameQueryEndpoint implements RdfQueryEndpoint
+public class GeonameQueryEndpoint implements RdfEndpoint
 {
     //-----CONSTANTS-----
     private static final Pattern CITY_ZIP_COUNTRY_PATTERN = Pattern.compile("([^,]*),(\\d+),(.*)");
@@ -85,16 +84,16 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
     //-----PUBLIC METHODS-----
     @Override
     //Note: check the inner cache class if you add variables
-    public Collection<AutocompleteSuggestion> search(RdfClass resourceType, final String query, QueryType queryType, Locale language, int maxResults, SearchOption... options) throws IOException
+    public Collection<ResourceProxy> search(RdfOntologyMember resourceType, final String query, QueryType queryType, Locale language, int maxResults) throws IOException
     {
-        Collection<AutocompleteSuggestion> retVal = new ArrayList<>();
+        Collection<ResourceProxy> retVal = new ArrayList<>();
 
         //I guess an empty query can't yield any results, right?
         if (!StringUtils.isEmpty(query)) {
 
             //use a cached result if it's there
-            CachedSearch cacheKey = new CachedSearch(this.geonameType, resourceType, query, queryType, language, options);
-            Collection<AutocompleteSuggestion> cachedResult = this.getCachedEntry(cacheKey);
+            CachedSearch cacheKey = new CachedSearch(this.geonameType, resourceType, query, queryType, language);
+            Collection<ResourceProxy> cachedResult = this.getCachedEntry(cacheKey);
 
             if (cachedResult != null) {
                 retVal = cachedResult;
@@ -103,7 +102,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                 ClientConfig config = new ClientConfig();
                 Client httpClient = ClientBuilder.newClient(config);
                 //for details, see http://www.geonames.org/export/geonames-search.html
-                UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/search")
+                UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/searchJSON")
                                                .queryParam("username", this.username)
                                                //no need to fetch the entire node; we'll do that during selection
                                                //note: we select MEDIUM instead of SHORT to get the full country name (for cities)
@@ -159,12 +158,17 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                     JsonNode jsonNode = Json.getObjectMapper().readTree(response.readEntity(String.class));
                     Iterator<JsonNode> geonames = jsonNode.path("geonames").elements();
 
-                    InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurieName());
+                    InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurie());
                     ObjectReader reader = Json.getObjectMapper().readerFor(geonameType.suggestionClass).with(inject);
 
                     while (geonames.hasNext()) {
                         try {
-                            retVal.add((AutocompleteSuggestion) reader.readValue(geonames.next()));
+                            AbstractGeoname resource = reader.readValue(geonames.next());
+
+                            //API doesn't seem to return this -> set it manually
+                            resource.setLanguage(language);
+
+                            retVal.add(resource);
                         }
                         catch (Exception e) {
                             Logger.error(query, e);
@@ -179,7 +183,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                 if (retVal.isEmpty()) {
                     //for one, we can search deeper if we're dealing with a city
                     if (this.geonameType.equals(AbstractGeoname.Type.CITY)) {
-                        retVal = this.deeperCitySearch(httpClient, resourceType, query, queryType, language, maxResults, options);
+                        retVal = this.deeperCitySearch(httpClient, resourceType, query, queryType, language, maxResults);
                     }
                 }
 
@@ -190,7 +194,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
         return retVal;
     }
     @Override
-    public ResourceInfo getResource(RdfClass resourceType, URI resourceId, Locale language) throws IOException
+    public ResourceProxy getResource(RdfOntologyMember resourceType, URI resourceId, Locale language) throws IOException
     {
         GeonameResourceInfo retVal = null;
 
@@ -213,21 +217,21 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                                                    //we pass only the id, not the entire URI
                                                    .queryParam("geonameId", rdfResourceUri.getResourceId())
                                                    //when we query, we query for a lot
-                                                   .queryParam("style", "FULL")
-                                                   .queryParam("type", "json");
+                                                   .queryParam("style", "FULL");
 
                     if (language != null) {
                         builder.queryParam("lang", language.getLanguage());
                     }
 
                     //Logger.info("Requesting "+builder.build());
-                    Response response = httpClient.target(builder.build()).request(MediaType.APPLICATION_JSON).get();
+
+                    //note: the Geonames '/get' endpoint is XML only!
+                    Response response = httpClient.target(builder.build()).request(MediaType.APPLICATION_XML).get();
                     if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 
-                        InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurieName());
+                        InjectableValues inject = new InjectableValues.Std().addValue(AbstractGeoname.RESOURCE_TYPE_INJECTABLE, resourceType.getCurie());
                         ObjectReader reader = XML.getObjectMapper().readerFor(GeonameResourceInfo.class).with(inject);
 
-                        //note: the Geonames '/get' endpoint is XML only!
                         retVal = reader.readValue(response.readEntity(String.class));
 
                         //API doesn't seem to return this -> set it manually
@@ -342,11 +346,11 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
     //-----PROTECTED METHODS-----
 
     //-----PRIVATE METHODS-----
-    private synchronized Collection<AutocompleteSuggestion> getCachedEntry(CachedSearch query)
+    private synchronized Collection<ResourceProxy> getCachedEntry(CachedSearch query)
     {
-        return (Collection<AutocompleteSuggestion>) this.getGeonameCache().get(query);
+        return (Collection<ResourceProxy>) this.getGeonameCache().get(query);
     }
-    private synchronized void putCachedEntry(CachedSearch key, Collection<AutocompleteSuggestion> results)
+    private synchronized void putCachedEntry(CachedSearch key, Collection<ResourceProxy> results)
     {
         this.getGeonameCache().put(key, results);
     }
@@ -382,10 +386,9 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
      * This method allows us to use queries like the one above, and use the Geonames postalCodeSearch endpoint to query the official name of that city.
      * Note that we have to do a two-step search because the postalCodeSearch doesn't seem to return the geoname ID...
      */
-    private Collection<AutocompleteSuggestion> deeperCitySearch(Client httpClient, RdfClass resourceType, final String query, QueryType queryType, Locale language, int maxResults,
-                                                                SearchOption... options)
+    private Collection<ResourceProxy> deeperCitySearch(Client httpClient, RdfOntologyMember resourceType, final String query, QueryType queryType, Locale language, int maxResults)
     {
-        Collection<AutocompleteSuggestion> retVal = new ArrayList<>();
+        Collection<ResourceProxy> retVal = new ArrayList<>();
 
         try {
             //this format allows us to specify an exact zip code, but if the known name doesn't match
@@ -420,7 +423,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                 if (countryCode != null) {
                     Logger.info("Didn't find any Geonames city result for '" + query + "', searching a bit deeper because we have a postal code.");
 
-                    UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/postalCodeSearch")
+                    UriBuilder builder = UriBuilder.fromUri("http://api.geonames.org/postalCodeSearchJSON")
                                                    .queryParam("username", this.username)
                                                    //.queryParam("postalcode", zipCode)
                                                    .queryParam("placename", city)
@@ -455,7 +458,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                         //Update: encountered a lot of errors when including the zipCode again, omitting it and hoping for the best...
                         //String newQuery = placeName+","+zipCode+","+countryCode;
                         String newQuery = placeName + "," + countryCode;
-                        retVal = this.search(resourceType, newQuery, queryType, language, maxResults, options);
+                        retVal = this.search(resourceType, newQuery, queryType, language, maxResults);
                     }
                 }
                 else {
@@ -465,7 +468,7 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
                 //as a last try, we omit the postal code and re-launch the search query one more time without postal code
                 if (retVal.isEmpty()) {
                     String newQuery = city + "," + country;
-                    retVal = this.search(resourceType, newQuery, queryType, language, maxResults, options);
+                    retVal = this.search(resourceType, newQuery, queryType, language, maxResults);
                 }
             }
         }
@@ -483,51 +486,33 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
     private static class CachedSearch
     {
         private AbstractGeoname.Type geonameType;
-        private RdfClass resourceType;
+        private RdfOntologyMember resourceType;
         private String query;
         private QueryType queryType;
         private Locale language;
-        private SearchOption[] options;
 
-        public CachedSearch(AbstractGeoname.Type geonameType, RdfClass resourceType, String query, QueryType queryType, Locale language, SearchOption[] options)
+        public CachedSearch(AbstractGeoname.Type geonameType, RdfOntologyMember resourceType, String query, QueryType queryType, Locale language)
         {
             this.geonameType = geonameType;
             this.resourceType = resourceType;
             this.query = query;
             this.queryType = queryType;
             this.language = language;
-            this.options = options;
         }
 
         @Override
         public boolean equals(Object o)
         {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof CachedSearch)) {
-                return false;
-            }
+            if (this == o) return true;
+            if (!(o instanceof CachedSearch)) return false;
 
             CachedSearch that = (CachedSearch) o;
 
-            if (geonameType != that.geonameType) {
-                return false;
-            }
-            if (resourceType != null ? !resourceType.equals(that.resourceType) : that.resourceType != null) {
-                return false;
-            }
-            if (query != null ? !query.equals(that.query) : that.query != null) {
-                return false;
-            }
-            if (queryType != that.queryType) {
-                return false;
-            }
-            if (language != null ? !language.equals(that.language) : that.language != null) {
-                return false;
-            }
-            // Probably incorrect - comparing Object[] arrays with Arrays.equals
-            return Arrays.equals(options, that.options);
+            if (geonameType != that.geonameType) return false;
+            if (resourceType != null ? !resourceType.equals(that.resourceType) : that.resourceType != null) return false;
+            if (query != null ? !query.equals(that.query) : that.query != null) return false;
+            if (queryType != that.queryType) return false;
+            return language != null ? language.equals(that.language) : that.language == null;
 
         }
         @Override
@@ -538,18 +523,17 @@ public class GeonameQueryEndpoint implements RdfQueryEndpoint
             result = 31 * result + (query != null ? query.hashCode() : 0);
             result = 31 * result + (queryType != null ? queryType.hashCode() : 0);
             result = 31 * result + (language != null ? language.hashCode() : 0);
-            result = 31 * result + Arrays.hashCode(options);
             return result;
         }
     }
 
     private static class CachedResource
     {
-        private RdfClass resourceType;
+        private RdfOntologyMember resourceType;
         private URI resourceId;
         private Locale language;
 
-        public CachedResource(RdfClass resourceType, URI resourceId, Locale language)
+        public CachedResource(RdfOntologyMember resourceType, URI resourceId, Locale language)
         {
             this.resourceType = resourceType;
             this.resourceId = resourceId;

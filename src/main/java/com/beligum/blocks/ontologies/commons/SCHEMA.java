@@ -20,15 +20,11 @@ import com.beligum.blocks.config.WidgetType;
 import com.beligum.blocks.exceptions.RdfInitializationException;
 import com.beligum.blocks.rdf.RdfFactory;
 import com.beligum.blocks.rdf.RdfNamespaceImpl;
+import com.beligum.blocks.rdf.RdfOntologyImpl;
 import com.beligum.blocks.rdf.ifaces.RdfClass;
 import com.beligum.blocks.rdf.ifaces.RdfNamespace;
-import com.beligum.blocks.rdf.ifaces.RdfOntology;
-import com.beligum.blocks.rdf.RdfOntologyImpl;
 import com.beligum.blocks.rdf.ifaces.RdfProperty;
 import com.beligum.blocks.rdf.ontologies.XSD;
-import gen.com.beligum.blocks.ontologies.commons.messages.blocks.ontologies.commons;
-
-import java.net.URI;
 
 /**
  * Created by bram on 2/28/16.

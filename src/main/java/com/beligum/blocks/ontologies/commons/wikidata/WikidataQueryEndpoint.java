@@ -17,6 +17,7 @@ package com.beligum.blocks.ontologies.commons.wikidata;
 
 import com.beligum.base.cache.Cache;
 import com.beligum.base.cache.EhCacheAdaptor;
+import com.beligum.base.i18n.I18nFactory;
 import com.beligum.base.server.R;
 import com.beligum.base.utils.Logger;
 import com.beligum.base.utils.json.Json;
@@ -74,10 +75,10 @@ public class WikidataQueryEndpoint implements RdfEndpoint
     private String[] wikidataInstancesOff;
     private RdfProperty[] cachedLabelProps;
     //this will use sql  to "cache" the wikidata label and basic model.
-    private final boolean USESSQL = true;
+    private final boolean USESSQL = R.configuration().getBoolean("wikidata.uses-sql");;
     //this disables fetching wikidata online (if the wikidata item is not found in the sql database it will not try to get it
     //from the sparql endpoint.
-    private final boolean DISABLEFETCHONLINE = R.configuration().getBoolean("disable-wiki-online");
+    private final boolean DISABLEFETCHONLINE = R.configuration().getBoolean("wikidata.disable-wiki-online");
 
 
     /**
@@ -150,7 +151,7 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                                " AS ?data) { ?site" +
                         "" +
                         "" +
-                        "link schema:about ?data. ?sitelink schema:isPartOf <https://en.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". }}UNION{ ?sitelink schema:about ?data. ?sitelink schema:isPartOf <https://fr.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \"?lang, fr\". } }UNION{ ?sitelink schema:about ?data. ?sitelink schema:isPartOf <https://nl.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \"?lang, nl\". } } OPTIONAL{?data wdt:P18 ?pic} OPTIONAL{?data schema:description ?dataDescription .}}";
+                        "link schema:about ?data. ?sitelink schema:isPartOf <https://en.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \""+R.i18n().getOptimalLocale().toLanguageTag()+"\". }}UNION{ ?sitelink schema:about ?data. ?sitelink schema:isPartOf <https://fr.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \"?lang, fr\". } }UNION{ ?sitelink schema:about ?data. ?sitelink schema:isPartOf <https://nl.wikipedia.org/>.?sitelink schema:inLanguage ?lang. SERVICE wikibase:label { bd:serviceParam wikibase:language \"?lang, nl\". } } OPTIONAL{?data wdt:P18 ?pic} OPTIONAL{?data schema:description ?dataDescription .}}";
                 RepositoryConnection sparqlConnection = null;
                 try {
                     SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
@@ -270,7 +271,8 @@ public class WikidataQueryEndpoint implements RdfEndpoint
 
     }
     /**
-     * Always have an english result!
+     * Please note that the entire model is not fetched from wikidata in this implementation. Models can get quite large (in the order of multiple MB's).
+     * Instead we build a tiny model with a construct statement.
      *
      * @param rdfClass
      * @param resourceId the id of the resource
@@ -291,8 +293,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
             URI rdfUri = this.getExternalResourceId(resourceId, language);
             String[] segments = rdfUri.getPath().split("/");
             String idStr = segments[segments.length - 1];
-            //the wikidata endpoint is actually https.
-//            Model cachedResult = this.getCachedEntry(cacheKey);
             Model cachedResult = null;
 
             if (cachedResult != null) {
@@ -312,12 +312,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                         IRI sub = factory.createIRI(wikidataModelSubject.getSubject());
                         IRI pred = factory.createIRI(wikidataModelSubject.getPredicate());
                         Statement nameStatement;
-                        //always make  it a  literal.
-//                        try {
-//                            //alwa
-//                            IRI obj = factory.createIRI(wikidataModelSubject.getObjectLabel());
-//                            nameStatement = factory.createStatement(sub, pred, obj);
-//                        } catch (Exception ex) {
                             Literal obj = null;
                             if(!StringUtils.isEmpty(wikidataModelSubject.getObjectLabel())){
                                  obj = factory.createLiteral(wikidataModelSubject.getObjectLabel(), wikidataModelSubject.getObjectLanguage());
@@ -326,30 +320,22 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                             }
                             nameStatement = factory.createStatement(sub, pred, obj);
                             languages.add(wikidataModelSubject.getObjectLanguage());
-//                        }
                         retVal.add(nameStatement);
                     }
 
-                    if (!languages.contains("en")) {
-                        Logger.error("english not found in database item!");
+                    if (!languages.contains(R.i18n().getOptimalLocale().toLanguageTag())) {
+                        Logger.error(R.i18n().getOptimalLocale().getLanguage() +" not found in database");
                         if (wikidataModelSubjects.iterator().hasNext()) {
                             GenericModelSubject statement = wikidataModelSubjects.iterator().next();
                             String subject = statement.getSubject().toString();
                             String predicate = statement.getPredicate().toString();
                             String objectLabel = statement.getObjectLabel();
-                            String objectLanguage = "en";
+                            String objectLanguage = R.i18n().getOptimalLocale().toLanguageTag();
 
                             IRI sub = factory.createIRI(subject);
                             IRI pred = factory.createIRI(predicate);
-                            //always a literal
-//                            try {
-//                                IRI obj = factory.createIRI(objectLabel);
-//                                nameStatement = factory.createStatement(sub, pred, obj);
-//                            } catch (Exception ex) {
                                 Literal obj = factory.createLiteral(objectLabel, objectLanguage);
                             Statement nameStatement = factory.createStatement(sub, pred, obj);
-//                            }
-                            //this is, of courseobjectLanguage, only one label. We will add the others as well.
                             if (USESSQL) {
                                 CachePersistor.getInstance().putWikidataAndModel(idStr, subject, predicate, objectLabel, objectLanguage);
                             }
@@ -361,7 +347,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
             }
 
             if (!DISABLEFETCHONLINE &&cachedResult == null && retVal == null) {
-//                Logger.info("getting from wikidata");
                 retVal = new LinkedHashModel();
 
                 try {
@@ -372,10 +357,8 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                             "WHERE {\n" +
                             "wd:" + idStr + " rdfs:label ?l .\n" +
                             "wd:" + idStr + " schema:description ?x .\n" +
-
-                            " FILTER(LANG(?l) = \"nl\" || LANG(?l) = \"en\" || LANG(?l) = \"fr\") .\n " +
-                            " FILTER(LANG(?x) = \"nl\" || LANG(?x) = \"en\" || LANG(?x) = \"fr\") .\n " +
-
+                                   " FILTER(LANG(?l) = \""+R.i18n().getOptimalLocale().toLanguageTag()+"\") .\n " +
+                                   " FILTER(LANG(?x) = \""+R.i18n().getOptimalLocale().toLanguageTag()+"\" ) .\n " +
                             "}";
                     RepositoryConnection sparqlConnection = null;
                     try {
@@ -403,16 +386,13 @@ public class WikidataQueryEndpoint implements RdfEndpoint
                             }
                             retVal.add(statement);
                         }
-                        if (!languagesParsed.contains("en")) {
-                            //FIXME  try first
-                            Logger.warn("english not found for " + resourceId);
-                            Logger.warn("taking any language " + resourceId);
+                        if (!languagesParsed.contains(R.i18n().getOptimalLocale().toLanguageTag())) {
                             if (resultModel.iterator().hasNext()) {
                                 Statement statement = resultModel.iterator().next();
                                 String subject = statement.getSubject().toString();
                                 String predicate = statement.getPredicate().toString();
                                 String objectLabel = ((Literal) statement.getObject()).getLabel();
-                                String objectLanguage = "en";
+                                String objectLanguage = R.i18n().getOptimalLocale().toLanguageTag();
 
                                 IRI sub = factory.createIRI(subject);
                                 IRI pred = statement.getPredicate();
@@ -446,7 +426,7 @@ public class WikidataQueryEndpoint implements RdfEndpoint
             if (retVal != null) {
             IRI sub = factory.createIRI("http://www.wikidata.org/entity/" + idStr);
             IRI pred = factory.createIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-            IRI obj = factory.createIRI("http://wikiba.se/ontology-beta#Item");
+            IRI obj = factory.createIRI(WB.NAMESPACE.getUri().toString()+WB.Item.getName());
             Statement nameStatement = factory.createStatement(sub, pred, obj);
             retVal.add(nameStatement);
             }
@@ -455,11 +435,6 @@ public class WikidataQueryEndpoint implements RdfEndpoint
             retVal =  new LinkedHashModel();
             Logger.error("wikidata "+resourceId + "has no external  model. ");
         }
-//        if(!fromDatabase){
-//            Logger.info("from query service");
-//        }else{
-//            Logger.info("from sql");
-//        }
         return retVal;
     }
 
@@ -510,14 +485,10 @@ public class WikidataQueryEndpoint implements RdfEndpoint
         }
         if(queriedValues != null && queriedValues.keySet().size() > 0){
             for(String key : queriedValues.keySet()){
-                switch (key){
-                    case "en" :retVal = queriedValues.get("en"); break;
-                    case "fr":retVal = queriedValues.get("fr"); break;
-                    case "nl":retVal = queriedValues.get("nl"); break;
-                    default:
-                        retVal = queriedValues.get(queriedValues.keySet().iterator().next()); break;
-
-                }
+                retVal = queriedValues.get(R.i18n().getOptimalLocale().toLanguageTag()); break;
+            }
+            if(retVal == null){
+                retVal = queriedValues.get(queriedValues.keySet().iterator().next());
             }
         }
        return  retVal;

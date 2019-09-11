@@ -24,7 +24,7 @@ public class SQLiteJDBCDriverConnection {
             config.setSynchronous(SQLiteConfig.SynchronousMode.OFF);
             config.setJournalMode(SQLiteConfig.JournalMode.OFF);
             SQLiteDataSource unpooled = new SQLiteDataSource(config);
-            String dbPath = UriBuilder.fromPath(R.configuration().getString("wikidata-database-path")).path("wikidata.db").build().toString();
+            String dbPath = UriBuilder.fromPath(R.configuration().getString("wikidata.database-path")).path("wikidata.db").build().toString();
             unpooled.setUrl("jdbc:sqlite://"+dbPath);
             pooled = DataSources.pooledDataSource(unpooled);
             createResourceinfoTable();
@@ -51,7 +51,7 @@ public class SQLiteJDBCDriverConnection {
 
         // SQL statement for creating a new table
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("CREATE TABLE IF NOT EXISTS `wikdatamodel` (\n");
+        stringBuilder.append("CREATE TABLE IF NOT EXISTS `wikidatamodel` (\n");
         stringBuilder.append("  `id` varchar(100) NOT NULL,\n");
         stringBuilder.append("   `numericid` int(11) DEFAULT NULL,\n");
         stringBuilder.append("   `subject` varchar(200) NOT NULL,\n");

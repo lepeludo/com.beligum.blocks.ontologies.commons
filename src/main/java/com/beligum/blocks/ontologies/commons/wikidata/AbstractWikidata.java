@@ -95,14 +95,12 @@ public abstract class AbstractWikidata implements ResourceProxy
 
     public void setDescription(String description)
     {
-        Logger.warn("description :"+description);
 
         this.description = description;
     }
 
     public void setLabel(String label)
     {
-        Logger.warn("label :"+label);
 
         this.label = label;
     }

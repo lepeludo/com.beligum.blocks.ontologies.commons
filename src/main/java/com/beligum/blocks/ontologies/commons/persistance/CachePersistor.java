@@ -74,7 +74,7 @@ public void putWikidataAndModel(String wikidataId, String subject, String predic
 
 public List<GenericModelSubject> getWikiModel(String wikidataId){
     List<GenericModelSubject> retVal = null;
-    String sqlQuery = "SELECT subject, predicate, objectlabel, objectlanguage FROM wikdatamodel WHERE id = ?";
+    String sqlQuery = "SELECT subject, predicate, objectlabel, objectlanguage FROM wikidatamodel WHERE id = ?";
     try (Connection conn = SQLiteJDBCDriverConnection.getInstance().getConnection();
                     PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
         stmt.setString(1, wikidataId);

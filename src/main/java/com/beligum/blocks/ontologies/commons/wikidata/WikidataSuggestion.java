@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.beligum.blocks.ontologies.commons.vocabularies;
-
-import com.beligum.blocks.rdf.ifaces.RdfVocabulary;
-import com.beligum.blocks.rdf.ontology.vocabularies.AbstractRdfVocabulary;
+package com.beligum.blocks.ontologies.commons.wikidata;
 
 import java.net.URI;
 
 /**
- * Created by bram on 2/28/16.
+ * Created by Bram on 6/01/17.
  */
-public final class DBR extends AbstractRdfVocabulary
+public class WikidataSuggestion extends AbstractWikidataSuggestion
 {
-    //-----SINGLETON-----
-    public static final RdfVocabulary INSTANCE = new DBR();
-    private DBR()
+    @Override
+    public boolean isExternal()
     {
-        super(URI.create("http://dbpedia.org/resource/"), "dbr");
+        return true;
+    }
+    @Override
+    public URI getParentUri()
+    {
+        return null;
+    }
+    @Override
+    public URI getImage()
+    {
+        return image;
     }
 
-    //-----ENTRIES-----
-
+    public void setWikidataId(String wikidataId){
+        super.wikidataId = wikidataId;
+    }
 }

@@ -25,4 +25,6 @@ public enum CacheKeys implements CacheKey
 {
     //Application cache key that caches the most recent results to not bombard the geonames server
     GEONAMES_CACHED_RESULTS,
+    WIKIDATA_CACHED_RESULTS
+
 }
